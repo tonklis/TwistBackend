@@ -1,0 +1,29 @@
+development:
+  host: localhost
+  adapter: postgresql
+  username: rails_pg
+  encoding: utf8
+  pool: 5
+  password: postgres
+  database: twist_dev
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  host: localhost
+  adapter: postgresql
+  username: rails_pg
+  encoding: utf8
+  pool: 5
+  password: postgres
+  database: twist_test
+
+production:
+  host: localhost
+  adapter: postgresql
+  username: rails_pg
+  encoding: utf8
+  pool: 5
+  password: postgres
+  database: twist_prod

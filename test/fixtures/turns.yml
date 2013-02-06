@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  game_id: 1
+  question: MyString
+  answer: false
+  is_guess: false
+
+two:
+  game_id: 1
+  question: MyString
+  answer: false
+  is_guess: false

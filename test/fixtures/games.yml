@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 1
+  board_id: 1
+  card_id: 1
+  question_count: 1
+  guess_count: 1
+  opponent_game_id: 1
+
+two:
+  user_id: 1
+  board_id: 1
+  card_id: 1
+  question_count: 1
+  guess_count: 1
+  opponent_game_id: 1

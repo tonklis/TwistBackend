@@ -1,0 +1,29 @@
+<h1>Listing boards</h1>
+
+<table>
+  <tr>
+    <th>Status</th>
+    <th>Detail xml</th>
+    <th>Winner</th>
+    <th>Money awarded</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @boards.each do |board| %>
+  <tr>
+    <td><%= board.status %></td>
+    <td><%= board.detail_xml %></td>
+    <td><%= board.winner_id %></td>
+    <td><%= board.money_awarded %></td>
+    <td><%= link_to 'Show', board %></td>
+    <td><%= link_to 'Edit', edit_board_path(board) %></td>
+    <td><%= link_to 'Destroy', board, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Board', new_board_path %>

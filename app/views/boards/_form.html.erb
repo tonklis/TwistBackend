@@ -1,0 +1,33 @@
+<%= form_for(@board) do |f| %>
+  <% if @board.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@board.errors.count, "error") %> prohibited this board from being saved:</h2>
+
+      <ul>
+      <% @board.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :status %><br />
+    <%= f.text_field :status %>
+  </div>
+  <div class="field">
+    <%= f.label :detail_xml %><br />
+    <%= f.text_area :detail_xml %>
+  </div>
+  <div class="field">
+    <%= f.label :winner_id %><br />
+    <%= f.number_field :winner_id %>
+  </div>
+  <div class="field">
+    <%= f.label :money_awarded %><br />
+    <%= f.number_field :money_awarded %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

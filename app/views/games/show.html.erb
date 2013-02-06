@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User:</b>
+  <%= @game.user_id %>
+</p>
+
+<p>
+  <b>Board:</b>
+  <%= @game.board_id %>
+</p>
+
+<p>
+  <b>Card:</b>
+  <%= @game.card_id %>
+</p>
+
+<p>
+  <b>Question count:</b>
+  <%= @game.question_count %>
+</p>
+
+<p>
+  <b>Guess count:</b>
+  <%= @game.guess_count %>
+</p>
+
+<p>
+  <b>Opponent game:</b>
+  <%= @game.opponent_game_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_game_path(@game) %> |
+<%= link_to 'Back', games_path %>

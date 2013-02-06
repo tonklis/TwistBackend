@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Status:</b>
+  <%= @board.status %>
+</p>
+
+<p>
+  <b>Detail xml:</b>
+  <%= @board.detail_xml %>
+</p>
+
+<p>
+  <b>Winner:</b>
+  <%= @board.winner_id %>
+</p>
+
+<p>
+  <b>Money awarded:</b>
+  <%= @board.money_awarded %>
+</p>
+
+
+<%= link_to 'Edit', edit_board_path(@board) %> |
+<%= link_to 'Back', boards_path %>

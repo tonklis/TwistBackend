@@ -1,0 +1,33 @@
+<%= form_for(@turn) do |f| %>
+  <% if @turn.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@turn.errors.count, "error") %> prohibited this turn from being saved:</h2>
+
+      <ul>
+      <% @turn.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :game_id %><br />
+    <%= f.number_field :game_id %>
+  </div>
+  <div class="field">
+    <%= f.label :question %><br />
+    <%= f.text_field :question %>
+  </div>
+  <div class="field">
+    <%= f.label :answer %><br />
+    <%= f.check_box :answer %>
+  </div>
+  <div class="field">
+    <%= f.label :is_guess %><br />
+    <%= f.check_box :is_guess %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
