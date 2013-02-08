@@ -14,7 +14,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 		
 		respond_to do |format|
-      format.html # index.html.erb
       format.json { render json: persisted }
     end
 
