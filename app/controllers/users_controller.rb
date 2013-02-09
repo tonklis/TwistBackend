@@ -80,4 +80,12 @@ class UsersController < ApplicationController
       format.json { head :ok }
     end
   end
+
+	def login
+		@user = User.login(params[:email], params[:first_name], params[:last_name], params[:facebook_id])
+    respond_to do |format|
+      format.json { render json: @user }
+    end
+
+	end
 end

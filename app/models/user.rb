@@ -3,15 +3,13 @@ class User < ActiveRecord::Base
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable
 	
-	devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :omniauthable, :validatable
+	devise :registerable, :trackable, :omniauthable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
 	has_many :boards
 	has_many :games
 
-	validates_presence_of :email, :password #, :first_name, :last_name,
+	validates_presence_of :email, :first_name, :last_name #, password
 
 	def self.find_for_facebook_oauth(auth, signed_in_resource = nil)
 		user = User.where(:email => auth.info.email).first
@@ -37,6 +35,14 @@ class User < ActiveRecord::Base
 				user.facebook_id = data.uid
 			end
 		end
+	end
+
+	def self.login(email, firstname, lastname, facebook_id)
+		user = User.find_by_email(email) 
+		if not user
+			user = User.create(:email => email, :first_name => firstname, :last_name => lastname, :facebook_id => facebook_id)
+		end
+		user
 	end
 
 end
