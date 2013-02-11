@@ -40,7 +40,7 @@ class User < ActiveRecord::Base
 	def self.login(email, first_name, last_name, facebook_id)
 		user = User.find_by_email(email) 
 		if not user
-			user = User.create(:email => email, :first_name => firstname, :last_name => lastname, :facebook_id => facebook_id)
+			user = User.create(:email => email, :first_name => first_name, :last_name => last_name, :facebook_id => facebook_id)
 		end
 		user
 	end
