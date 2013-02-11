@@ -37,12 +37,21 @@ class User < ActiveRecord::Base
 		end
 	end
 
-	def self.login(email, firstname, lastname, facebook_id)
+	def self.login(email, first_name, last_name, facebook_id)
 		user = User.find_by_email(email) 
 		if not user
 			user = User.create(:email => email, :first_name => firstname, :last_name => lastname, :facebook_id => facebook_id)
 		end
 		user
+	end
+
+	def self.registered_users facebook_ids
+		registered_users = []
+		facebook_ids.each do |facebook_id|
+			user = User.find_by_facebook_id(facebook_id)
+			registered_users << user if user
+		end
+		registered_users
 	end
 
 end

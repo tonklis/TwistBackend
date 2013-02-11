@@ -11,7 +11,9 @@ TwistBack::Application.routes.draw do
 
   resources :boards
 
-  resources :users
+  resources :users do
+		match 'registered', :on => :collection
+	end
 
 	match 'login' => 'users#login', :as => :login
 

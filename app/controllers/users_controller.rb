@@ -86,6 +86,14 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.json { render json: @user }
     end
-
 	end
+
+	def registered
+		facebook_ids = params[:facebook_ids].split(",")
+		@users = User.registered_users(facebook_ids)
+		respond_to do |format|
+			format.json { render json: @users }
+		end
+	end
+
 end

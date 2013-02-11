@@ -4,7 +4,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :facebook_id
       t.string :first_name
       t.string :last_name
-      t.integer :money
+      t.integer :money, :default => 0
 
       t.timestamps
     end
