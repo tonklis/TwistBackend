@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable
 	
-	devise :registerable, :trackable, :omniauthable
+	#devise :registerable, :trackable, :omniauthable
 
   # Setup accessible (or protected) attributes for your model
 	has_many :boards
@@ -38,9 +38,11 @@ class User < ActiveRecord::Base
 	end
 
 	def self.login(email, first_name, last_name, facebook_id)
-		user = User.find_by_email(email)  #find_by_facebook_id  #actualizar datos
+		user = User.find_by_facebook_id(facebook_id)
 		if not user
 			user = User.create(:email => email, :first_name => first_name, :last_name => last_name, :facebook_id => facebook_id)
+		elsif not user.email
+			user.update_attributes(:email => email, :first_name => first_name, :last_name => last_name)
 		end
 		user
 	end

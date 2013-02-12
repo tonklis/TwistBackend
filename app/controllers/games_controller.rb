@@ -32,7 +32,6 @@ class GamesController < ApplicationController
           @opponent_game.opponent_game_id = @game.id
           if @opponent_game.save
             @game.update_attribute(:opponent_game_id, @opponent_game.id)
-            #format.json { render json: @game, :include => {:board => {}, :user => {}, :opponent_game => {:include => :user}}, status: :created, location: @game }
             format.json { render json: @game, status: :created, location: @game }
           else
             format.json { render json: @opponent_game.errors, status: :unprocessable_entity }

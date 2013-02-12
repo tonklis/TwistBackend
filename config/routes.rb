@@ -7,7 +7,9 @@ TwistBack::Application.routes.draw do
 
   resources :turns
 
-  resources :games
+  resources :games do
+		match 'start', :on => :collection
+	end
 
   resources :boards
 
@@ -20,8 +22,6 @@ TwistBack::Application.routes.draw do
   match 'cards_by_type/:id' => 'cards#cards_by_type', :as => :get_type
 
   match 'games_by_user/:id' => 'games#games_by_user', :as => :games_by_user
-
-  match 'games/start/' => 'games#start'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
