@@ -21,6 +21,8 @@ TwistBack::Application.routes.draw do
 
   match 'games_by_user/:id' => 'games#games_by_user', :as => :games_by_user
 
+  match 'games/start/' => 'games#start'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

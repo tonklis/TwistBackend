@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130206031349) do
+ActiveRecord::Schema.define(:version => 20130212214328) do
 
   create_table "boards", :force => true do |t|
     t.string   "status"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(:version => 20130206031349) do
     t.integer  "money_awarded"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "last_action"
   end
 
   create_table "cards", :force => true do |t|
@@ -76,6 +77,7 @@ ActiveRecord::Schema.define(:version => 20130206031349) do
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["facebook_id"], :name => "index_users_on_facebook_id", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
 end

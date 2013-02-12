@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
 	has_many :boards
 	has_many :games
 
-	validates_presence_of :email, :first_name, :last_name #, password
+	validates_presence_of :facebook_id #, password
 
 	def self.find_for_facebook_oauth(auth, signed_in_resource = nil)
 		user = User.where(:email => auth.info.email).first
@@ -38,7 +38,7 @@ class User < ActiveRecord::Base
 	end
 
 	def self.login(email, first_name, last_name, facebook_id)
-		user = User.find_by_email(email) 
+		user = User.find_by_email(email)  #find_by_facebook_id  #actualizar datos
 		if not user
 			user = User.create(:email => email, :first_name => first_name, :last_name => last_name, :facebook_id => facebook_id)
 		end
@@ -52,6 +52,14 @@ class User < ActiveRecord::Base
 			registered_users << user if user
 		end
 		registered_users
+	end
+
+	def self.get_from_facebook_info facebook_id, first_name
+		user = User.find_by_facebook_id(facebook_id)
+		if not user
+			user = User.create(:facebook_id => facebook_id, :first_name => first_name)
+		end
+		user
 	end
 
 end

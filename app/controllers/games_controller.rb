@@ -7,6 +7,45 @@ class GamesController < ApplicationController
     end
   end
 
+  def start
+    @board = Board.new()
+    @board.last_action = params[:user_id]
+    @board.detail_xml = params[:detail_xml]
+    @board.status = 'NUEVO'
+    
+    @game = Game.new()
+    @game.user_id = params[:user_id]
+    @game.card_id = params[:card_id]
+    @game.question_count = 0
+    @game.guess_count = 0
+
+    @opponent_game = Game.new()
+    @opponent_game.user_id = User.get_from_facebook_info(params[:opponent_id], params[:opponent_name]).id
+    @opponent_game.question_count = 0
+    @opponent_game.guess_count = 0  
+
+    respond_to do |format|
+      if @board.save
+        @game.board_id = @board.id
+        @opponent_game.board_id = @board.id
+        if @game.save
+          @opponent_game.opponent_game_id = @game.id
+          if @opponent_game.save
+            @game.update_attribute(:opponent_game_id, @opponent_game.id)
+            #format.json { render json: @game, :include => {:board => {}, :user => {}, :opponent_game => {:include => :user}}, status: :created, location: @game }
+            format.json { render json: @game, status: :created, location: @game }
+          else
+            format.json { render json: @opponent_game.errors, status: :unprocessable_entity }
+          end
+        else
+          format.json { render json: @game.errors, status: :unprocessable_entity }
+        end
+      else
+        format.json { render json: @board.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   # GET /games
   # GET /games.json
   def index
