@@ -9,6 +9,7 @@ TwistBack::Application.routes.draw do
 
   resources :games do
 		match 'start', :on => :collection
+    match 'accept/:id' => 'games#accept', :on => :collection
 	end
 
   resources :boards

@@ -6,9 +6,16 @@ class GamesController < ApplicationController
     @board.detail_xml = params[:detail_xml]
     @board.status = 'NUEVO'
     
+    @card_id
+    if (params[:card_type] == Template.find_by_description("Amigos").id)
+      @card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
+    else
+      @card_id = params[:card_id]
+    end
+
     @game = Game.new()
     @game.user_id = params[:user_id]
-    @game.card_id = params[:card_id]
+    @game.card_id = @card_id
     @game.question_count = 0
     @game.guess_count = 0
 
@@ -34,6 +41,26 @@ class GamesController < ApplicationController
         end
       else
         format.json { render json: @board.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def accept
+    @card_id
+    if (params[:card_type] == Template.find_by_description("Amigos").id)
+      @card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
+    else
+      @card_id = params[:card_id]
+    end
+
+    @game = Game.find(params[:id])
+    
+    respond_to do |format|
+      if @game.update_attribute(:card_id, @card_id)
+        format.json { render json: @game, status: :updated, location: @game }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @game.errors, status: :unprocessable_entity }
       end
     end
   end

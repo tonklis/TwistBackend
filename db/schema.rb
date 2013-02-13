@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130213051244) do
+ActiveRecord::Schema.define(:version => 20130213173245) do
 
   create_table "apn_devices", :force => true do |t|
     t.string   "token",              :null => false
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20130213051244) do
     t.integer  "template_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "facebook_id"
   end
 
   create_table "games", :force => true do |t|
