@@ -19,9 +19,9 @@ TwistBack::Application.routes.draw do
 
 	match 'login' => 'users#login', :as => :login
 
-  match 'cards_by_type/:id' => 'cards#cards_by_type', :as => :get_type
+  match 'cards_by_type/:id' => 'templates#cards_by_type', :as => :get_type
 
-  match 'games_by_user/:id' => 'games#games_by_user', :as => :games_by_user
+  match 'games_by_user/:id' => 'users#games_by_user', :as => :games_by_user
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

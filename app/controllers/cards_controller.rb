@@ -1,11 +1,4 @@
 class CardsController < ApplicationController
-  
-  def cards_by_type
-    @cards = Card.where("template_id = ?", params[:id].to_s)
-    respond_to do |format|
-      format.json { render json: @cards }
-    end    
-  end
 
   # GET /cards
   # GET /cards.json

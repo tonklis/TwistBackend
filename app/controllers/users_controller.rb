@@ -1,4 +1,12 @@
 class UsersController < ApplicationController
+  
+  def games_by_user
+    @games = User.find(params[:id]).games.includes(:board, :user, :opponent_game => :user)
+    respond_to do |format|
+      format.json { render json: @games, :include => {:board => {}, :user => {}, :opponent_game => {:include => :user}} }
+    end
+  end
+  
   # GET /users
   # GET /users.json
   def index
