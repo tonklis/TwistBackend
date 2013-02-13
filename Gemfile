@@ -7,6 +7,7 @@ gem 'rails', '3.1.10'
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
+gem 'apn_on_rails', :git => 'https://github.com/natescherer/apn_on_rails.git', :branch => 'rails3'
 gem 'devise'
 gem 'cancan'
 gem 'omniauth-facebook'

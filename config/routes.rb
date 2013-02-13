@@ -17,6 +17,8 @@ TwistBack::Application.routes.draw do
 		match 'registered', :on => :collection
 	end
 
+	match 'ios_notification' => 'notifications#ios_notification'
+
 	match 'login' => 'users#login', :as => :login
 
   match 'cards_by_type/:id' => 'templates#cards_by_type', :as => :get_type

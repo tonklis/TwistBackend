@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/natescherer/apn_on_rails.git
+  revision: 18f5d37397e3f003152c51b257d9da939b70438f
+  branch: rails3
+  specs:
+    apn_on_rails (0.3.1rails3)
+      configatron
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -41,6 +49,8 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.4.0)
+    configatron (2.10.0)
+      yamler (>= 0.1.0)
     devise (2.2.3)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -140,11 +150,13 @@ GEM
       multi_json (~> 1.0, >= 1.0.2)
     warden (1.2.1)
       rack (>= 1.0)
+    yamler (0.1.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  apn_on_rails!
   cancan
   coffee-rails (~> 3.1.0)
   devise
