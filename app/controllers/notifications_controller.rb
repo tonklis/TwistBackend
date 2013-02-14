@@ -29,6 +29,7 @@ class NotificationsController < ApplicationController
 		notification.alert = message
 		notification.save   
 
+		APN::Notification.send_notifications
 		respond_to do |format|
       format.json { head :ok }
     end	
