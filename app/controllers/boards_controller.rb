@@ -1,4 +1,21 @@
 class BoardsController < ApplicationController
+  
+  def abandon
+    @board = Board.find(params[:id])
+    @board.update_attributes(:status => "ABANDONO", :last_action => params[:user_id])
+    respond_to do |format|
+      format.json { render json: @board }
+    end
+  end
+
+  def close
+    @board = Board.find(params[:id])
+    @board.update_attribute(:status, "OCULTO")
+    respond_to do |format|
+      format.json { render json: @board }
+    end
+  end
+
   # GET /boards
   # GET /boards.json
   def index

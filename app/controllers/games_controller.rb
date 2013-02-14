@@ -1,5 +1,12 @@
 class GamesController < ApplicationController
 
+  def last_turn
+    @turn = Turn.where("game_id = ?", params[:id]).last
+    respond_to do |format|
+      format.json { render json: @turn}
+    end
+  end
+
   def start
     @board = Board.new()
     @board.last_action = params[:user_id]
@@ -54,14 +61,61 @@ class GamesController < ApplicationController
     end
 
     @game = Game.find(params[:id])
-    
+    @board = Board.find(@game.board_id)
+    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id)
+
     respond_to do |format|
       if @game.update_attribute(:card_id, @card_id)
         format.json { render json: @game, status: :updated, location: @game }
       else
-        format.html { render action: "edit" }
         format.json { render json: @game.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def ask
+    @game = Game.find(params[:id])
+    @opponent_game = Game.find(@game.opponent_game_id)
+    @board = Board.find(@game.board_id)
+
+    respond_to do |format|
+      @turn = Turn.create(:game_id => @game.id, :is_guess => 0, :question => params[:question])
+      
+      @game.update_attribute(:question_count, @game.question_count + 1)
+
+      @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
+
+      @last_turn = Turn.where("game_id = ?", @opponent_game.id).last
+      if @last_turn && @last_turn.is_guess == false
+        @last_turn.update_attribute(:answer, params[:answer])
+      end
+
+      format.json { render json: @game, :include => {:board => {}} }
+    end
+  end
+
+  def guess
+    @game = Game.find(params[:id])
+    @opponent_game = Game.find(@game.opponent_game_id)
+    @board = Board.find(@game.board_id)
+
+    respond_to do |format|
+      @turn = Turn.create(:game_id => @game.id, :is_guess => 1)
+      
+      @game.update_attribute(:guess_count, @game.guess_count + 1)
+
+      @last_turn = Turn.where("game_id = ?", @opponent_game.id).last
+      if @last_turn && @last_turn.is_guess == false
+        @last_turn.update_attribute(:answer, params[:answer])
+      end
+      
+      if (@opponent_game.card_id == params[:card_id])
+        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id)
+      else
+        @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
+      end
+
+      format.json { render json: @game, :include => {:board => {}} }
     end
   end
 
