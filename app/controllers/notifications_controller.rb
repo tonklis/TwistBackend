@@ -24,12 +24,12 @@ class NotificationsController < ApplicationController
 
 		notification = APN::Notification.new   
 		notification.device = device   
-		notification.badge = 5 
+		notification.badge = 2
 		notification.sound = true   
 		notification.alert = message
 		notification.save   
 
-		APN::Notification.send_notifications
+		#APN::Notification.send_notifications
 		respond_to do |format|
       format.json { head :ok }
     end	
