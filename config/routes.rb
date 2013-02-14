@@ -10,9 +10,15 @@ TwistBack::Application.routes.draw do
   resources :games do
 		match 'start', :on => :collection
     match 'accept/:id' => 'games#accept', :on => :collection
+    match 'ask/:id' => 'games#ask', :on => :collection
+    match 'last_turn/:id' => 'games#last_turn', :on => :collection
+    match 'guess/:id' => 'games#guess', :on => :collection
 	end
 
-  resources :boards
+  resources :boards do
+    match 'close/:id' => 'boards#close', :on => :collection
+    match 'abandon/:id' => 'boards#abandon', :on => :collection
+  end
 
   resources :users do
 		match 'registered', :on => :collection
