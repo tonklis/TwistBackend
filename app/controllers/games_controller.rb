@@ -109,7 +109,7 @@ class GamesController < ApplicationController
         @last_turn.update_attribute(:answer, params[:answer])
       end
       
-      if (@opponent_game.card_id == params[:card_id])
+      if (@opponent_game.card_id == params[:card_id].to_i)
         @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id)
       else
         @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])

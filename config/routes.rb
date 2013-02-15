@@ -11,8 +11,8 @@ TwistBack::Application.routes.draw do
 		match 'start', :on => :collection
     match 'accept/:id' => 'games#accept', :on => :collection
     match 'ask/:id' => 'games#ask', :on => :collection
-    match 'last_turn/:id' => 'games#last_turn', :on => :collection
     match 'guess/:id' => 'games#guess', :on => :collection
+    match 'last_turn/:id' => 'games#last_turn', :on => :collection
 	end
 
   resources :boards do
