@@ -62,11 +62,11 @@ class GamesController < ApplicationController
 
     @game = Game.find(params[:id])
     @board = Board.find(@game.board_id)
-    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id)
+    @board.update_attribute(:status, "TURNO")
 
     respond_to do |format|
       if @game.update_attribute(:card_id, @card_id)
-        format.json { render json: @game, status: :updated, location: @game }
+        format.json { render json: @game}
       else
         format.json { render json: @game.errors, status: :unprocessable_entity }
       end
