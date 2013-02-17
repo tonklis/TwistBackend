@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130217004145) do
+ActiveRecord::Schema.define(:version => 20130217063257) do
 
   create_table "apn_devices", :force => true do |t|
     t.string   "token",              :null => false
@@ -101,7 +101,7 @@ ActiveRecord::Schema.define(:version => 20130217004145) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.integer  "device_id"
-    t.integer  "badge_number"
+    t.integer  "badge_number",           :default => 0,  :null => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

@@ -24,7 +24,7 @@ TwistBack::Application.routes.draw do
 		match 'registered', :on => :collection
 	end
 
-	match 'ios_send_notification' => 'notifications#ios_notification'
+	match 'ios_send_notification_to_opponent' => 'notifications#ios_send_notification_to_opponent'
 	
 	match 'ios_register' => 'notifications#ios_register'
 

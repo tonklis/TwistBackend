@@ -36,7 +36,7 @@ class NotificationsController < ApplicationController
 
 	end
 
-	def send_ios_notification_to_opponent
+	def ios_send_notification_to_opponent
 
 		game = Game.find(params[:game_id])
 		if not game
@@ -56,6 +56,8 @@ class NotificationsController < ApplicationController
 			notification.sound = sound
 			notification.alert = message
 			notification.save!
+
+			game.opponent_game.user.update_attribute(:badge_number, badge_number)
 
 			send_notifications
 
