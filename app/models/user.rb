@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
 	has_many :boards
 	has_many :games
+	belongs_to :device, :class_name=>"APN::Device"
 
 	validates_presence_of :facebook_id #, password
 
