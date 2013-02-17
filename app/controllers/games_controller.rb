@@ -8,46 +8,58 @@ class GamesController < ApplicationController
   end
 
   def start
-    @board = Board.new()
-    @board.last_action = params[:user_id]
-    @board.detail_xml = params[:detail_xml]
-    @board.status = 'NUEVO'
-    
-    @card_id
-    if (params[:card_type] == Template.find_by_description("Amigos").id)
-      @card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
-    else
-      @card_id = params[:card_id]
+    hasActiveGame = false
+    current_games = User.find(params[:user_id]).games.includes(:board, :user, :opponent_game => :user)
+    current_games.each do |current_game|
+      if current_game.opponent_game.user.facebook_id == params[:opponent_id] && current_game.board.status == "NUEVO"
+        hasActiveGame = true
+      end
     end
-
-    @game = Game.new()
-    @game.user_id = params[:user_id]
-    @game.card_id = @card_id
-    @game.question_count = 0
-    @game.guess_count = 0
-
-    @opponent_game = Game.new()
-    @opponent_game.user_id = User.get_from_facebook_info(params[:opponent_id], params[:opponent_name]).id
-    @opponent_game.question_count = 0
-    @opponent_game.guess_count = 0  
-
     respond_to do |format|
-      if @board.save
-        @game.board_id = @board.id
-        @opponent_game.board_id = @board.id
-        if @game.save
-          @opponent_game.opponent_game_id = @game.id
-          if @opponent_game.save
-            @game.update_attribute(:opponent_game_id, @opponent_game.id)
-            format.json { render json: @game, status: :created, location: @game }
-          else
-            format.json { render json: @opponent_game.errors, status: :unprocessable_entity }
-          end
+      if !hasActiveGame
+        @board = Board.new()
+        @board.last_action = params[:user_id]
+        @board.detail_xml = params[:detail_xml]
+        @board.status = 'NUEVO'
+        
+        @card_id
+        if (params[:card_type] == Template.find_by_description("Amigos").id)
+          @card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
         else
-          format.json { render json: @game.errors, status: :unprocessable_entity }
+          @card_id = params[:card_id]
         end
+
+        @game = Game.new()
+        @game.user_id = params[:user_id]
+        @game.card_id = @card_id
+        @game.question_count = 0
+        @game.guess_count = 0
+
+        @opponent_game = Game.new()
+        @opponent_game.user_id = User.get_from_facebook_info(params[:opponent_id], params[:opponent_name]).id
+        @opponent_game.question_count = 0
+        @opponent_game.guess_count = 0  
+
+        
+          if @board.save
+            @game.board_id = @board.id
+            @opponent_game.board_id = @board.id
+            if @game.save
+              @opponent_game.opponent_game_id = @game.id
+              if @opponent_game.save
+                @game.update_attribute(:opponent_game_id, @opponent_game.id)
+                format.json { render json: @game, status: :created, location: @game }
+              else
+                format.json { render json: @opponent_game.errors, status: :unprocessable_entity }
+              end
+            else
+              format.json { render json: @game.errors, status: :unprocessable_entity }
+            end
+          else
+            format.json { render json: @board.errors, status: :unprocessable_entity }
+          end
       else
-        format.json { render json: @board.errors, status: :unprocessable_entity }
+        format.json {render json: {:error => "There is already an active game"}}
       end
     end
   end
@@ -62,11 +74,11 @@ class GamesController < ApplicationController
 
     @game = Game.find(params[:id])
     @board = Board.find(@game.board_id)
-    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id)
+    @board.update_attribute(:status, "TURNO")
 
     respond_to do |format|
       if @game.update_attribute(:card_id, @card_id)
-        format.json { render json: @game, status: :updated, location: @game }
+        format.json { render json: @game}
       else
         format.json { render json: @game.errors, status: :unprocessable_entity }
       end
@@ -109,7 +121,7 @@ class GamesController < ApplicationController
         @last_turn.update_attribute(:answer, params[:answer])
       end
       
-      if (@opponent_game.card_id == params[:card_id])
+      if (@opponent_game.card_id == params[:card_id].to_i)
         @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id)
       else
         @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
