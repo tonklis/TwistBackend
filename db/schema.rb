@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130213173245) do
+ActiveRecord::Schema.define(:version => 20130217004145) do
 
   create_table "apn_devices", :force => true do |t|
     t.string   "token",              :null => false
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(:version => 20130213173245) do
     t.integer  "opponent_game_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_hidden",        :default => false
   end
 
   create_table "templates", :force => true do |t|
