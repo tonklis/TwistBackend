@@ -3,7 +3,7 @@ class CreateGames < ActiveRecord::Migration
     create_table :games do |t|
       t.integer :user_id
       t.integer :board_id
-      t.integer :card_id
+      t.integer :card_id, :limit => 8
       t.integer :question_count
       t.integer :guess_count
       t.integer :opponent_game_id

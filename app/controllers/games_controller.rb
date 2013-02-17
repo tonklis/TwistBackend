@@ -22,8 +22,8 @@ class GamesController < ApplicationController
         @board.detail_xml = params[:detail_xml]
         @board.status = 'NUEVO'
         
-        @card_id
-        if (params[:card_type] == Template.find_by_description("Amigos").id)
+        @card_id = nil
+        if (params[:card_type].to_i == Template.find_by_description("Amigos").id)
           @card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
         else
           @card_id = params[:card_id]
@@ -65,12 +65,13 @@ class GamesController < ApplicationController
   end
 
   def accept
-    @card_id
-    if (params[:card_type] == Template.find_by_description("Amigos").id)
-      @card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
-    else
-      @card_id = params[:card_id]
-    end
+
+		@card_id = nil
+    if (params[:card_type].to_i == Template.find_by_description("Amigos").id)
+    	@card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
+		else
+			@card_id = params[:card_id]
+		end
 
     @game = Game.find(params[:id])
     @board = Board.find(@game.board_id)
@@ -120,13 +121,24 @@ class GamesController < ApplicationController
       if @last_turn && @last_turn.is_guess == false
         @last_turn.update_attribute(:answer, params[:answer])
       end
-      
-      if (@opponent_game.card_id == params[:card_id].to_i)
-        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id)
-      else
-        @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
-      end
 
+			# Usuario de facebook
+			if (params[:card_type].to_i == Template.find_by_description("Amigos").id)
+				if (@opponent_game.card_id == Card.find_by_facebook_id(params[:card_id]).id)
+	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id)
+  	    else
+    	    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
+      	end
+			# Usuario de template
+			else
+				if (@opponent_game.card_id == params[:card_id].to_i)
+	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id)
+  	    else
+    	    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
+      	end
+
+			end			
+      
       format.json { render json: @game, :include => {:board => {}} }
     end
   end

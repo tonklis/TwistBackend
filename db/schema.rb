@@ -87,7 +87,7 @@ ActiveRecord::Schema.define(:version => 20130217063257) do
     t.string   "facebook_id"
     t.string   "first_name"
     t.string   "last_name"
-    t.integer  "money"
+    t.integer  "money",                  :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "email"
