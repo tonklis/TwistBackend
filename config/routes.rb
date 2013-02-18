@@ -24,7 +24,7 @@ TwistBack::Application.routes.draw do
 		match 'registered', :on => :collection
 	end
 
-	match 'reset_badges/:id' => 'users#reset_badges'
+	match 'users/reset_badges/:id' => 'users#reset_badges'
 
 	match 'ios_send_notification_to_opponent' => 'notifications#ios_send_notification_to_opponent'
 	
