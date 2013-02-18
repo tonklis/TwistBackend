@@ -107,4 +107,13 @@ class UsersController < ApplicationController
 		end
 	end
 
+	def reset_badges
+		user = User.find(params[:id])
+		user.update_attribute(:badge_number, 0)
+
+		respond_to do |format|
+			format.json { render json: user }
+    end	
+	end
+
 end

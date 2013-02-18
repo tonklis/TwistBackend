@@ -123,7 +123,7 @@ class GamesController < ApplicationController
       end
 
 			# Usuario de facebook
-			if (params[:card_type].to_i == Template.find_by_description("Amigos").id)
+			if (params[:card_type] and params[:card_type].to_i == Template.find_by_description("Amigos").id)
 				if (@opponent_game.card_id == Card.find_by_facebook_id(params[:card_id]).id)
 	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id)
   	    else
