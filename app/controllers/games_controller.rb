@@ -127,14 +127,18 @@ class GamesController < ApplicationController
 				card_in_database = Card.find_by_facebook_id(params[:card_id])
 
 				if (card_in_database and @opponent_game.card_id == card_in_database.id)
-	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id)
+          coins = @game.calculate_money
+	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id, :money_awarded => coins)
+          User.find(@game.user_id).update_score coins
   	    else
     	    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
       	end
 			# Usuario de template
 			else
 				if (@opponent_game.card_id == params[:card_id].to_i)
-	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id)
+          coins = @game.calculate_money
+	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id, :money_awarded => coins)
+          User.find(@game.user_id).update_score coins
   	    else
     	    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
       	end

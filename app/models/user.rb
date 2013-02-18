@@ -65,4 +65,8 @@ class User < ActiveRecord::Base
 		user
 	end
 
+	def update_score money
+		score = self.money.to_i + money
+		self.update_attribute(:money, score)
+	end
 end
