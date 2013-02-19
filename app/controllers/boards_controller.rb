@@ -2,9 +2,9 @@ class BoardsController < ApplicationController
   
   def abandon
     @board = Board.find(params[:id])
-    if @board.status != "FINALIZO"
+    if @board.status == "NUEVO" || @board.status == "TURNO"
       @board.update_attributes(:status => "ABANDONO", :last_action => params[:user_id])
-    else
+    elsif @board.status == "FINALIZO"
       @games = Game.where("board_id = ? AND user_id = ?", params[:id], params[:user_id].to_i)
       @games[0].update_attribute(:is_hidden, true)
     end
