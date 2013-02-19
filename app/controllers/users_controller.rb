@@ -4,7 +4,7 @@ class UsersController < ApplicationController
     @games = User.find(params[:id]).games.includes(:board, :user, :opponent_game => :user)
     @show_games = []
     @games.each do |game|
-      @gshow_games.push(game) if !(game.board.status == "OCULTO" || game.is_hidden?)
+      @show_games.push(game) if !(game.board.status == "OCULTO" || game.is_hidden?)
     end
     respond_to do |format|
       format.json { render json: @show_games, :include => {:board => {}, :user => {}, :card => {}, :opponent_game => {:include => :user}} }
