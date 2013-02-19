@@ -2,11 +2,12 @@ class UsersController < ApplicationController
   
   def games_by_user
     @games = User.find(params[:id]).games.includes(:board, :user, :opponent_game => :user)
+    @show_games = []
     @games.each do |game|
-      @games.delete_at(@games.index(game)) if (game.board.status == "OCULTO" || game.is_hidden?)
+      @gshow_games.push(game) if !(game.board.status == "OCULTO" || game.is_hidden?)
     end
     respond_to do |format|
-      format.json { render json: @games, :include => {:board => {}, :user => {}, :card => {}, :opponent_game => {:include => :user}} }
+      format.json { render json: @show_games, :include => {:board => {}, :user => {}, :card => {}, :opponent_game => {:include => :user}} }
     end
   end
   
