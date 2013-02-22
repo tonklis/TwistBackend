@@ -8,6 +8,9 @@ class BoardsController < ApplicationController
       @games = Game.where("board_id = ? AND user_id = ?", params[:id], params[:user_id].to_i)
       @games[0].update_attribute(:is_hidden, true)
     end
+    elsif @board.status == "ABANDONO"
+      @board.update_attribute(:status, "OCULTO")
+    end
     respond_to do |format|
       format.json { render json: @board }
     end

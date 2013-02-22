@@ -75,13 +75,17 @@ class GamesController < ApplicationController
 
     @game = Game.find(params[:id])
     @board = Board.find(@game.board_id)
-    @board.update_attribute(:status, "TURNO")
 
     respond_to do |format|
-      if @game.update_attribute(:card_id, @card_id)
-        format.json { render json: @game}
+      if (@board.status == "NUEVO")
+        if @game.update_attribute(:card_id, @card_id)
+          @board.update_attribute(:status, "TURNO")
+          format.json { render json: @game}
+        else
+          format.json { render json: @game.errors, status: :unprocessable_entity }
+        end
       else
-        format.json { render json: @game.errors, status: :unprocessable_entity }
+        format.json {render json: {:error => "Your opponent abandoned the game"}}
       end
     end
   end
@@ -92,18 +96,21 @@ class GamesController < ApplicationController
     @board = Board.find(@game.board_id)
 
     respond_to do |format|
-      @turn = Turn.create(:game_id => @game.id, :is_guess => 0, :question => params[:question])
-      
-      @game.update_attribute(:question_count, @game.question_count + 1)
+      if (@board.status == "TURNO" || @board.status == "NUEVO")
+        @turn = Turn.create(:game_id => @game.id, :is_guess => 0, :question => params[:question])
+        
+        @game.update_attribute(:question_count, @game.question_count + 1)
 
-      @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
+        @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
 
-      @last_turn = Turn.where("game_id = ?", @opponent_game.id).last
-      if @last_turn && @last_turn.is_guess == false
-        @last_turn.update_attribute(:answer, params[:answer])
+        @last_turn = Turn.where("game_id = ?", @opponent_game.id).last
+        if (@last_turn && @last_turn.is_guess == false)
+          @last_turn.update_attribute(:answer, params[:answer])
+        end
+        format.json { render json: @game, :include => {:board => {}} }
+      else
+        format.json {render json: {:error => "Your opponent abandoned the game"}}
       end
-
-      format.json { render json: @game, :include => {:board => {}} }
     end
   end
 
@@ -113,39 +120,42 @@ class GamesController < ApplicationController
     @board = Board.find(@game.board_id)
 
     respond_to do |format|
-      @turn = Turn.create(:game_id => @game.id, :is_guess => 1)
-      
-      @game.update_attribute(:guess_count, @game.guess_count + 1)
+      if (@board.status == "TURNO" || @board.status == "NUEVO")
+        @turn = Turn.create(:game_id => @game.id, :is_guess => 1)
+        
+        @game.update_attribute(:guess_count, @game.guess_count + 1)
 
-      @last_turn = Turn.where("game_id = ?", @opponent_game.id).last
-      if @last_turn && @last_turn.is_guess == false
-        @last_turn.update_attribute(:answer, params[:answer])
+        @last_turn = Turn.where("game_id = ?", @opponent_game.id).last
+        if @last_turn && @last_turn.is_guess == false
+          @last_turn.update_attribute(:answer, params[:answer])
+        end
+
+  			# Usuario de facebook
+  			if (params[:card_type] and params[:card_type].to_i == Template.find_by_description("Amigos").id)
+  				card_in_database = Card.find_by_facebook_id(params[:card_id])
+
+  				if (card_in_database and @opponent_game.card_id == card_in_database.id)
+            coins = @game.calculate_money
+  	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id, :money_awarded => coins)
+            User.find(@game.user_id).update_score coins
+    	    else
+      	    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
+        	end
+  			# Usuario de template
+  			else
+  				if (@opponent_game.card_id == params[:card_id].to_i)
+            coins = @game.calculate_money
+  	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id, :money_awarded => coins)
+            User.find(@game.user_id).update_score coins
+    	    else
+      	    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
+        	end
+
+  			end			
+        format.json { render json: @game, :include => {:board => {}} }
+      else
+        format.json {render json: {:error => "Your opponent abandoned the game"}}
       end
-
-			# Usuario de facebook
-			if (params[:card_type] and params[:card_type].to_i == Template.find_by_description("Amigos").id)
-				card_in_database = Card.find_by_facebook_id(params[:card_id])
-
-				if (card_in_database and @opponent_game.card_id == card_in_database.id)
-          coins = @game.calculate_money
-	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id, :money_awarded => coins)
-          User.find(@game.user_id).update_score coins
-  	    else
-    	    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
-      	end
-			# Usuario de template
-			else
-				if (@opponent_game.card_id == params[:card_id].to_i)
-          coins = @game.calculate_money
-	        @board.update_attributes(:status => "FINALIZO", :last_action => @game.user_id, :detail_xml => params[:detail_xml], :winner_id => @game.user_id, :money_awarded => coins)
-          User.find(@game.user_id).update_score coins
-  	    else
-    	    @board.update_attributes(:status => "TURNO", :last_action => @game.user_id, :detail_xml => params[:detail_xml])
-      	end
-
-			end			
-      
-      format.json { render json: @game, :include => {:board => {}} }
     end
   end
 
