@@ -8,6 +8,7 @@ gem 'rails', '3.1.10'
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 gem 'apn_on_rails', :git => 'https://github.com/natescherer/apn_on_rails.git', :branch => 'rails3'
+gem 'gcm_on_rails', :git => 'https://github.com/greg-barnett/gcm_on_rails', :branch => 'json_error_fix'
 gem 'devise'
 gem 'cancan'
 gem 'omniauth-facebook'

@@ -11,13 +11,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130217063257) do
+ActiveRecord::Schema.define(:version => 20130222205535) do
 
   create_table "apn_devices", :force => true do |t|
     t.string   "token",              :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "last_registered_at"
+    t.integer  "user_id"
   end
 
   add_index "apn_devices", ["token"], :name => "index_apn_devices_on_token", :unique => true
@@ -59,14 +60,37 @@ ActiveRecord::Schema.define(:version => 20130217063257) do
   create_table "games", :force => true do |t|
     t.integer  "user_id"
     t.integer  "board_id"
-    t.integer  "card_id"
+    t.integer  "card_id",          :limit => 8
     t.integer  "question_count"
     t.integer  "guess_count"
     t.integer  "opponent_game_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "is_hidden",        :default => false
+    t.boolean  "is_hidden",                     :default => false
   end
+
+  create_table "gcm_devices", :force => true do |t|
+    t.text     "registration_id",    :null => false
+    t.datetime "last_registered_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+  end
+
+  add_index "gcm_devices", ["registration_id"], :name => "index_gcm_devices_on_registration_id", :unique => true
+
+  create_table "gcm_notifications", :force => true do |t|
+    t.integer  "device_id",        :null => false
+    t.string   "collapse_key"
+    t.text     "data"
+    t.boolean  "delay_while_idle"
+    t.datetime "sent_at"
+    t.integer  "time_to_live"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gcm_notifications", ["device_id"], :name => "index_gcm_notifications_on_device_id"
 
   create_table "templates", :force => true do |t|
     t.string   "description"
@@ -100,7 +124,6 @@ ActiveRecord::Schema.define(:version => 20130217063257) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.integer  "device_id"
     t.integer  "badge_number",           :default => 0,  :null => false
   end
 

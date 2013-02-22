@@ -8,6 +8,7 @@ TwistBack::Application.load_tasks
 
 begin
 	require 'apn_on_rails_tasks'
+	require 'gcm_on_rails_tasks'
 rescue MissingSourceFile => e
 	puts e.message
 end

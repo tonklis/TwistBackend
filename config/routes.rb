@@ -26,9 +26,14 @@ TwistBack::Application.routes.draw do
 
 	match 'users/reset_badges/:id' => 'users#reset_badges'
 
-	match 'ios_send_notification_to_opponent' => 'notifications#ios_send_notification_to_opponent'
+	match 'send_notification_to_opponent' => 'notifications#send_notification_to_opponent'
+	
+	#Borrar, esta es para que sea backwards compatible
+	match 'ios_send_notification_to_opponent' => 'notifications#send_notification_to_opponent'
 	
 	match 'ios_register' => 'notifications#ios_register'
+	
+	match 'android_register' => 'notifications#android_register'
 
 	match 'login' => 'users#login', :as => :login
 
