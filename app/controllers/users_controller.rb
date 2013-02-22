@@ -1,11 +1,32 @@
 class UsersController < ApplicationController
   
   def games_by_user
-    @games = User.find(params[:id]).games.includes(:board, :user, :opponent_game => :user)
+    @games = User.find(params[:id]).games.includes(:board, :user, :opponent_game => :user).order("boards.status", "boards.last_action", "games.updated_at")
     @show_games = []
     @games.each do |game|
       @show_games.push(game) if !(game.board.status == "OCULTO" || game.is_hidden?)
     end
+
+    new_games_received = []
+    new_games_sent = []
+    my_turn_games = []
+    their_turn_games = []
+    won_games = []
+    lost_games = []
+    quit_games = []
+
+    @show_games.each do |game|
+      new_games_received.push(game) if (game.board.status == "NUEVO" && game.board.last_action != game.user_id)
+      new_games_sent.push(game) if (game.board.status == "NUEVO" && game.board.last_action == game.user_id)
+      my_turn_games.push(game) if (game.board.status == "TURNO" && game.board.last_action != game.user_id)
+      their_turn_games.push(game) if (game.board.status == "TURNO" && game.board.last_action == game.user_id)
+      won_games.push(game) if (game.board.status == "FINALIZO" && game.board.winner_id == game.user_id)
+      lost_games.push(game) if (game.board.status == "FINALIZO" && game.board.winner_id != game.user_id)
+      quit_games.push(game) if (game.board.status == "ABANDONO")
+    end
+
+    @show_games = new_games_received + my_turn_games + new_games_sent + their_turn_games + won_games + lost_games + quit_games
+
     respond_to do |format|
       format.json { render json: @show_games, :include => {:board => {}, :user => {}, :card => {}, :opponent_game => {:include => :user}} }
     end
