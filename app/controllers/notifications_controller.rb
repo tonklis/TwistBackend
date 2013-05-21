@@ -83,7 +83,11 @@ class NotificationsController < ApplicationController
 
 			game.opponent_game.user.update_attribute(:badge_number, badge_number)
 
-			ios_send_notifications
+      begin
+  			ios_send_notifications
+      rescue
+        logger.error "Error sending IOS notifications"
+      end
 
 		end
 
@@ -96,7 +100,11 @@ class NotificationsController < ApplicationController
 			notification.data = {:message => params[:message], :title => "AdivinaMe"}
 
 			notification.save!
-			Gcm::Notification.send_notifications			
+      begin
+			  Gcm::Notification.send_notifications			
+      rescue
+        logger.error "Error sending IOS notifications"
+      end
 
 		end
 
