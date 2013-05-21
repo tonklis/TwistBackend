@@ -103,7 +103,7 @@ class NotificationsController < ApplicationController
       begin
 			  Gcm::Notification.send_notifications			
       rescue
-        logger.error "Error sending IOS notifications"
+        logger.error "Error sending Google notifications"
       end
 
 		end
