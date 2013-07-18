@@ -68,11 +68,11 @@ class NotificationsController < ApplicationController
 
 		ios_devices = game.opponent_game.user.ios_devices
 		android_devices = game.opponent_game.user.android_devices
+    badge_number	= game.opponent_game.user.badge_number + 1
 
 		ios_devices.each do |ios_device|
 			message = params[:message]
 			sound = params[:sound].nil? ? params[:sound] : true
-			badge_number	= game.opponent_game.user.badge_number + 1
 
 			notification = APN::Notification.new   
 			notification.device = ios_device   
@@ -81,8 +81,6 @@ class NotificationsController < ApplicationController
 			notification.alert = message
 			notification.save!
 
-			game.opponent_game.user.update_attribute(:badge_number, badge_number)
-
       begin
   			ios_send_notifications
       rescue
@@ -90,6 +88,8 @@ class NotificationsController < ApplicationController
       end
 
 		end
+
+	  game.opponent_game.user.update_attribute(:badge_number, badge_number)
 
 		android_devices.each do |android_device|
 
