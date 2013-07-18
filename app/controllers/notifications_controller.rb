@@ -5,7 +5,9 @@ class NotificationsController < ApplicationController
 	def android_register
 
 		registration_id = params[:regid]
+    logger.debug "registration_id #{registration_id}"
 		device = Gcm::Device.find_or_create_by_registration_id(registration_id)
+    logger.debug "device #{device}"
 		if not device 
 			raise "Incorrect parameters regid: #{registration_id}"
 		end
