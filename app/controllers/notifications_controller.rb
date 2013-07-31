@@ -49,7 +49,7 @@ class NotificationsController < ApplicationController
 
 		if params[:facebook_id]
 			user = User.find_by_facebook_id(params[:facebook_id])
-			if not user.android_devices.index(device)
+			if not user.ios_devices.index(device)
 				user.ios_devices << device
 				user.save!
 			end
