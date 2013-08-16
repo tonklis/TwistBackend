@@ -41,23 +41,23 @@ class GamesController < ApplicationController
         @opponent_game.guess_count = 0  
 
         
-          if @board.save
-            @game.board_id = @board.id
-            @opponent_game.board_id = @board.id
-            if @game.save
-              @opponent_game.opponent_game_id = @game.id
-              if @opponent_game.save
-                @game.update_attribute(:opponent_game_id, @opponent_game.id)
-                format.json { render json: @game, status: :created, location: @game }
-              else
-                format.json { render json: @opponent_game.errors, status: :unprocessable_entity }
-              end
+        if @board.save
+          @game.board_id = @board.id
+          @opponent_game.board_id = @board.id
+          if @game.save
+            @opponent_game.opponent_game_id = @game.id
+            if @opponent_game.save
+              @game.update_attribute(:opponent_game_id, @opponent_game.id)
+              format.json { render json: @game, status: :created, location: @game }
             else
-              format.json { render json: @game.errors, status: :unprocessable_entity }
+              format.json { render json: @opponent_game.errors, status: :unprocessable_entity }
             end
           else
-            format.json { render json: @board.errors, status: :unprocessable_entity }
+            format.json { render json: @game.errors, status: :unprocessable_entity }
           end
+        else
+          format.json { render json: @board.errors, status: :unprocessable_entity }
+        end
       else
         format.json {render json: {:error => "There is already an active game"}}
       end

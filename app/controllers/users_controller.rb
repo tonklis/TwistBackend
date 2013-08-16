@@ -1,10 +1,32 @@
 class UsersController < ApplicationController
   
   def games_by_user
-    @games = User.find(params[:id]).games.includes(:board, :user, :opponent_game => :user).order("boards.status", "boards.last_action", "games.updated_at")
-    @show_games = []
-    @games.each do |game|
-      @show_games.push(game) if !(game.board.status == "OCULTO" || game.is_hidden?)
+
+    game_ids = []
+    latest_games = ActiveRecord::Base.connection.execute("select max(g1.board_id) as board from games g1, games g2,  boards b where g1.opponent_game_id = g2.id and g1.board_id = b.id and g1.user_id = " + params[:id] +" and g1.is_hidden = 'f' AND b.status != 'OCULTO' group by g2.user_id") 
+    latest_games.each do |game|
+      game_ids.push(game["board"])
+    end
+
+    @show_games = User.find(params[:id]).games.where("games.board_id in (?)", game_ids).includes(:board, :user, :opponent_game => :user).order("boards.status", "boards.last_action", "games.updated_at")
+    previous_games = ActiveRecord::Base.connection.execute("select max(g1.board_id) as board, b.status, b.winner_id, b.last_action, g1.is_hidden as game1, g2.is_hidden as game2, g2.user_id as opponent from games g1, games g2,  boards b where g1.opponent_game_id = g2.id and g1.board_id = b.id and g1.user_id = " + params[:id] + " and g1.is_hidden = 'f' AND (b.status =='ABANDONO' OR b.status == 'FINALIZO' ) and g1.board_id not in (" + game_ids.join(',') + ") group by g2.user_id")
+    
+    @show_games.each do |game|
+      if game.board.status == 'NUEVO'
+        previous_games.each do |p_game|
+          if game.opponent_game.user_id == p_game["opponent"]
+            if p_game["status"] == "FINALIZO"
+              if p_game["winner_id"] == game.user_id
+                game["previous_result"] = 0
+              else
+                game["previous_result"] = 1
+              end
+            elsif p_game["status"] == "ABANDONO"
+              game["previous_result"] = 2
+            end
+          end
+        end
+      end
     end
 
     new_games_received = []

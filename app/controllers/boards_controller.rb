@@ -2,14 +2,25 @@ class BoardsController < ApplicationController
   
   def abandon
     @board = Board.find(params[:id])
-    if @board.status == "NUEVO" || @board.status == "TURNO"
+   
+    if @board.status == "ABANDONO"
+      @board.update_attribute(:status, "OCULTO")  
+      
+    elsif @board.status == "NUEVO" || @board.status == "TURNO"
       @board.update_attributes(:status => "ABANDONO", :last_action => params[:user_id])
-    elsif @board.status == "FINALIZO"
-      @games = Game.where("board_id = ? AND user_id = ?", params[:id], params[:user_id].to_i)
-      @games[0].update_attribute(:is_hidden, true)
-    elsif @board.status == "ABANDONO"
-      @board.update_attribute(:status, "OCULTO")
     end
+   
+    @games = Game.where("board_id = ? AND user_id = ?", params[:id], params[:user_id].to_i)
+    @games[0].update_attribute(:is_hidden, true)
+
+#    if @board.status == "NUEVO" || @board.status == "TURNO"
+#      @board.update_attributes(:status => "ABANDONO", :last_action => params[:user_id])
+#    elsif @board.status == "FINALIZO"
+#      @games = Game.where("board_id = ? AND user_id = ?", params[:id], params[:user_id].to_i)
+#      @games[0].update_attribute(:is_hidden, true)
+#    elsif @board.status == "ABANDONO"
+ #     @board.update_attribute(:status, "OCULTO")
+  #  end
     respond_to do |format|
       format.json { render json: @board }
     end
