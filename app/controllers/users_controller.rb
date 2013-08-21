@@ -11,7 +11,7 @@ class UsersController < ApplicationController
 
     # Toda la info de los juegos
     @show_games = User.find(params[:id]).games.where("games.board_id in (?)", game_ids).includes(:board, :user, :opponent_game => :user).order("boards.status", "boards.last_action", "games.updated_at")
-    prvious_games = []
+    previous_games = []
     # Sacar el segundo juego más reciente por cada oponente que tenga status ABANDONO o FINALIZO
     #previous_games = ActiveRecord::Base.connection.execute("select max(g1.board_id) as board, b.status, b.winner_id, b.last_action, g1.is_hidden as game1, g2.is_hidden as game2, g2.user_id as opponent from games g1, games g2,  boards b where g1.opponent_game_id = g2.id and g1.board_id = b.id and g1.user_id = " + params[:id] + " and g1.is_hidden = false AND (b.status = 'ABANDONO' OR b.status = 'FINALIZO' ) and g1.board_id not in (" + game_ids.join(',') + ") group by g2.user_id")
     
