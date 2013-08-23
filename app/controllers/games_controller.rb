@@ -9,9 +9,10 @@ class GamesController < ApplicationController
 
   def start
     hasActiveGame = false
-    current_games = User.find(params[:user_id]).games.includes(:board, :user, :opponent_game => :user)
+    opponent = User.find_by_facebook_id(params[:opponent_id])
+    current_games = User.find(params[:user_id]).games.includes(:board, :opponent_game).where("opponent_games_games.user_id = ?", opponent.id).order("boards.id desc")
     current_games.each do |current_game|
-      if current_game.opponent_game.user.facebook_id == params[:opponent_id] && current_game.board.status == "NUEVO"
+      if current_game.board.status == "NUEVO"
         hasActiveGame = true
       end
     end
@@ -21,6 +22,9 @@ class GamesController < ApplicationController
         @board.last_action = params[:user_id]
         @board.detail_xml = params[:detail_xml]
         @board.status = 'NUEVO'
+        if current_games.length > 0
+          @board.previous_board_id = current_games[0].board.id
+        end
         
         @card_id = nil
         if (params[:card_type].to_i == Template.find_by_description("Amigos").id)

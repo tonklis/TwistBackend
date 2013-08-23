@@ -8,26 +8,23 @@ class UsersController < ApplicationController
       game_ids.push(game["board"])
     end
 
-    @show_games = User.find(params[:id]).games.where("games.board_id in (?)", game_ids).includes(:board, :user, :opponent_game => :user).order("boards.status", "boards.last_action", "games.updated_at")
-    previous_games = ActiveRecord::Base.connection.execute("select max(g1.board_id) as board, b.status, b.winner_id, b.last_action, g1.is_hidden as game1, g2.is_hidden as game2, g2.user_id as opponent from games g1, games g2,  boards b where g1.opponent_game_id = g2.id and g1.board_id = b.id and g1.user_id = " + params[:id] + " and g1.is_hidden = false AND (b.status = 'ABANDONO' OR b.status = 'FINALIZO' ) and g1.board_id not in (" + game_ids.join(',') + ") group by g2.user_id, b.status, b.winner_id, b.last_action, game1, game2, opponent")
-    
+    @show_games = User.find(params[:id]).games.where("games.board_id in (?)", game_ids).includes(:board => :previous_board, :user => {}, :opponent_game => :user).order("boards.status", "boards.last_action", "games.updated_at")
+    #previous_games = ActiveRecord::Base.connection.execute("select max(g1.board_id) as board, b.status, b.winner_id, b.last_action, g1.is_hidden as game1, g2.is_hidden as game2, g2.user_id as opponent from games g1, games g2,  boards b where g1.opponent_game_id = g2.id and g1.board_id = b.id and g1.user_id = " + params[:id] + " and g1.is_hidden = false AND (b.status = 'ABANDONO' OR b.status = 'FINALIZO' ) and g1.board_id not in (" + game_ids.join(',') + ") group by g2.user_id, b.status, b.winner_id, b.last_action, game1, game2, opponent")
 
     @show_games.each do |game|
-      #if game.board.status == 'NUEVO'
-        previous_games.each do |p_game|
-          if game.opponent_game.user_id == p_game["opponent"]
-            if p_game["status"] == "FINALIZO"
-              if p_game["winner_id"] == game.user_id
-                game["previous_result"] = 0
-              else
-                game["previous_result"] = 1
-              end
-            elsif p_game["status"] == "ABANDONO"
-              game["previous_result"] = 2
+      if game.board.status == 'NUEVO'
+        unless game.board.previous_board.nil?
+          if game.board.previous_board.status == "FINALIZO"
+            if game.board.previous_board.winner_id == game.user_id
+              game["previous_result"] = 0
+            else
+              game["previous_result"] = 1
             end
+          elsif game.board.previous_board.status == "ABANDONO"
+            game["previous_result"] = 2
           end
         end
-      #end
+      end
     end
 
     new_games_received = []
