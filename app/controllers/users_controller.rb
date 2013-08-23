@@ -21,7 +21,11 @@ class UsersController < ApplicationController
               game["previous_result"] = 1
             end
           elsif game.board.previous_board.status == "ABANDONO"
-            game["previous_result"] = 2
+            if game.board.previous_board.last_action != game.user_id
+              game["previous_result"] = 2
+            else
+              game["previous_result"] = 3
+            end
           end
         end
       end
