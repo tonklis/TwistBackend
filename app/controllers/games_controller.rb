@@ -71,11 +71,11 @@ class GamesController < ApplicationController
   def accept
 
 		@card_id = nil
-    if (params[:card_type].to_i == Template.find_by_description("Amigos").id)
-    	@card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
-		else
+    #if (params[:card_type].to_i == Template.find_by_description("Amigos").id)
+    #	@card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
+		#else
 			@card_id = params[:card_id]
-		end
+		#end
 
     @game = Game.find(params[:id])
     @board = Board.find(@game.board_id)
