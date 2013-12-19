@@ -25,13 +25,18 @@ class GamesController < ApplicationController
         if current_games.length > 0
           @board.previous_board_id = current_games[0].board.id
         end
-        
-        @card_id = nil
-        if (params[:card_type].to_i == Template.find_by_description("Amigos").id)
-          @card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
-        else
-          @card_id = params[:card_id]
-        end
+       
+        ################################################################################
+        # Usar en caso de que se pueda usar otro tipo de carta
+        ################################################################################ 
+        #@card_id = nil
+        #if (params[:card_type].to_i == Template.find_by_description("Amigos").id)
+        #  @card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
+        #else
+        #  @card_id = params[:card_id]
+        #end
+
+        @card_id = params[:card_id]
 
         @game = Game.new()
         @game.user_id = params[:user_id]
@@ -70,12 +75,17 @@ class GamesController < ApplicationController
 
   def accept
 
-		@card_id = nil
+    ################################################################################
+    # Usar en caso de que se pueda usar otro tipo de carta
+    ################################################################################
+		#@card_id = nil
     #if (params[:card_type].to_i == Template.find_by_description("Amigos").id)
     #	@card_id = Card.get_friend(params[:card_facebook_id], params[:card_name]).id
 		#else
-			@card_id = params[:card_id]
+		#	@card_id = params[:card_id]
 		#end
+
+    @card_id = params[:card_id]
 
     @game = Game.find(params[:id])
     @board = Board.find(@game.board_id)
